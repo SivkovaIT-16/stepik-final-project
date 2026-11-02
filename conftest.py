@@ -16,6 +16,7 @@ def browser(request):
     language = request.config.getoption('language')
 
     options = Options()
+    options.add_experimental_option("debuggerAddress", "127.0.0.1:9222")
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--disable-gpu')
@@ -25,4 +26,5 @@ def browser(request):
     browser = webdriver.Chrome(options=options)
     yield browser
     print('\nquit browser..')
-    browser.quit()
+    # browser.quit()
+
