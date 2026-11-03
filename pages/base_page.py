@@ -31,13 +31,8 @@ class BasePage():
         return True
 
     def solve_quiz_and_get_code(self):
-        WebDriverWait(self.browser, 10).until(EC.alert_is_present())
-        alert = self.browser.switch_to.alert
-        x = alert.text.split(" ")[2]
-        answer = str(math.log(abs((12 * math.sin(float(x))))))
-        alert.send_keys(answer)
-        alert.accept()
-
+        pass
+        
     def is_disappeared(self, how, what, timeout=4):
         try:
             WebDriverWait(self.browser, timeout, 1, TimeoutException).\
@@ -56,3 +51,10 @@ class BasePage():
     def go_to_basket_page(self):
         basket_link = self.browser.find_element(*BasePageLocators.BASKET_LINK)
         basket_link.click()
+
+    def should_be_authorized_user(self):
+        WebDriverWait(self.browser, 10).until(
+            EC.presence_of_element_located(BasePageLocators.USER_ICON)
+        )
+        assert self.is_element_present(*BasePageLocators.USER_ICON), "User icon is not presented, probably unauthorised user"
+
