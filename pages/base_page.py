@@ -1,7 +1,7 @@
 import math
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, NoAlertPresentException
 from .locators import BasePageLocators
 
 
@@ -31,8 +31,29 @@ class BasePage():
         return True
 
     def solve_quiz_and_get_code(self):
-        pass
-        
+        try:
+            WebDriverWait(self.browser, 3).until(EC.alert_is_present())
+            alert = self.browser.switch_to.alert
+            
+            if "Чему равно" in alert.text:
+                x = alert.text.split(" ")[2]
+                answer = str(math.log(abs((12 * math.sin(float(x))))))
+                alert.send_keys(answer)
+                alert.accept()
+            else:
+                print(f"Неожиданный алерт: {alert.text}")
+                alert.accept()
+                
+        except (TimeoutException, NoAlertPresentException):
+            print("Алерта не было, идем дальше")
+
+        try:
+            WebDriverWait(self.browser, 2).until(EC.alert_is_present())
+            alert = self.browser.switch_to.alert
+            print(f"Второй алерт: {alert.text}")
+            alert.accept()
+        except (TimeoutException, NoAlertPresentException):
+            pass        
     def is_disappeared(self, how, what, timeout=4):
         try:
             WebDriverWait(self.browser, timeout, 1, TimeoutException).\
